@@ -1,0 +1,42 @@
+﻿@model AspNetCoreIdentityApp.Areas.Admin.ViewModels.AdminBeeHiveViewModel2
+@{
+    ViewData["Title"] = "Add Beehive";
+}
+
+<h1 class="text-center">Beehive Ekleme - @Model.UserName</h1>
+
+<div class="container">
+    <form asp-controller="Home" asp-action="AddBeehive" method="post">
+        <input type="hidden" asp-for="UserId" />
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label">Kovan Lokasyonu</label>
+            <input asp-for="Location" class="form-control" />
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ProductionDate" class="form-label">Üretim Tarihi</label>
+            <input asp-for="ProductionDate" type="date" class="form-control" />
+            <span asp-validation-for="ProductionDate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Capacity" class="form-label">Kapasite</label>
+            <input asp-for="Capacity" type="number" class="form-control" />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Kovan Ekle</button>
+            <a asp-action="UserList" class="btn btn-secondary">Geri Dön</a>
+        </div>
+    </form>
+
+    @if (ViewData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success mt-3">
+            @ViewData["SuccessMessage"]
+        </div>
+    }
+</div>

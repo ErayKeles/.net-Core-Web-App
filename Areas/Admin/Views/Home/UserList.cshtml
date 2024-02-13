@@ -1,0 +1,71 @@
+﻿@model List<AdminUserViewModel>
+@{
+    ViewData["Title"] = "UserList";
+}
+
+<h1 class="text-center">Kayıtlı Kullanıcılar</h1>
+
+<div class="align-middle" style="text-align:center;">
+    <table id="userTable" class="table table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>KULLANICI ADI</th>
+                <th>EMAİL</th>
+                <th></th>
+                <th>KULLANICI İŞLEMLERİ</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><user-picture-thumbnail picture-url="@item.PictureURL" class="rounded-3 align-middle" width="50"></user-picture-thumbnail></td>
+                    <td class="align-middle">@item.UserID</td>
+                    <td class="align-middle">@item.UserName</td>
+                    <td class="align-middle">@item.UserEmail</td>
+                    <td class="align-middle">
+                        <user-role-names user-id="@item.UserID"></user-role-names>
+                    </td>
+                    <td class="align-middle">
+                        <a asp-controller="Roles" asp-action="AssingRole" asp-route-id="@item.UserID" class="btn btn-info">Ünvan Ata</a>
+                        <a asp-controller="Home" asp-action="AddBeehive" asp-route-userId="@item.UserID" class="btn btn-success">Kovan Ekle</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        @if (ViewBag.TotalCount > ViewBag.PageSize)
+        {
+            int totalPages = (int)Math.Ceiling((double)ViewBag.TotalCount / ViewBag.PageSize);
+            for (int i = 1; i <= totalPages; i++)
+            {
+                <a href="#" onclick="changePage(@i)" class="btn @(ViewBag.PageNumber == i ? "btn-primary" : "btn-secondary")">@i</a>
+            }
+        }
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#userTable').DataTable({
+                "paging": false,  // Sayfalama özelliğini DataTables'e bırakın (server-side paging kullanıyorsunuz)
+                "lengthMenu": [10, 25, 50, 100],
+                "searching": false,  // Arama özelliğini kapatın (isteğe bağlı)
+                "ordering": true,
+                "info": true,
+            });
+        });
+
+        function changePage(pageNumber) {
+            // Sayfa değiştikçe URL'yi güncelleyin ve sayfayı yeniden yükleyin
+            window.location.href = '/Admin/UserList?page=' + pageNumber + '&pageSize=' + @ViewBag.PageSize;
+        }
+    </script>
+}

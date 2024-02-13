@@ -1,0 +1,23 @@
+﻿@using AspNetCoreIdentityApp.TagHelpers
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Oooo Patron Hoş Geldin</h1>
+<!-- Using Custom Tag Helper -->
+<custom-welcome></custom-welcome>
+
+<!-- Custom HTML Helper -->
+<div>@Html.CustomWelcomeMessage()</div>
+
+<!-- HTML Helper (ActionLink) -->
+<div>@Html.ActionLink("User Lıst (HTML Helper)", "UserList", "Home")</div>
+
+<!-- Tag Helper -->
+<div>
+    <a asp-controller="Roles" asp-action="Index">Role Index (Tag Helper)</a>
+</div>
+
+
+<custom-mail mail-address="example@mail.com"></custom-mail>

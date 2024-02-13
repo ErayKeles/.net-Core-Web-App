@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeHive List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyIdDpw1N0n+4xl47bOJTG/mI4lQ=="
+          crossorigin="anonymous">
+</head>
+<body>
+
+    @model List<AspNetCoreIdentityApp.Areas.Admin.ViewModels.AdminBeeHiveViewModel>
+
+    <h2>BeeHive List for Admin</h2>
+
+    <div>
+        <!-- Location Arama -->
+        <label for="locationInput">Location:</label>
+        <input type="text" id="locationInput" placeholder="Search by Location">
+    </div>
+
+    <div>
+        <!-- Production Date Arama -->
+        <label for="dateInput">Production Date:</label>
+        <input type="date" id="dateInputMin" placeholder="Start Date">
+        <input type="date" id="dateInputMax" placeholder="End Date">
+        <select id="dateFilter">
+            <option value="on">On</option>
+            <option value="before">Before</option>
+            <option value="after">After</option>
+        </select>
+    </div>
+
+    <div>
+        <!-- Capacity Arama -->
+        <label for="capacityInput">Capacity:</label>
+        <input type="number" id="capacityInputMin" placeholder="Min Capacity">
+        <input type="number" id="capacityInputMax" placeholder="Max Capacity">
+    </div>
+
+    <div>
+        <!-- Owner Arama -->
+        <label for="ownerInput">Owner:</label>
+        <input type="text" id="ownerInput" placeholder="Search by Owner">
+    </div>
+
+    <div>
+        <!-- Owner's Email Arama -->
+        <label for="emailInput">Owner's Email:</label>
+        <input type="text" id="emailInput" placeholder="Search by Email">
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Location</th>
+                <th>Production Date</th>
+                <th>Capacity</th>
+                <th>Owner</th>
+                <th>Owner's Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var beeHive in Model)
+            {
+                <tr>
+                    <td>@beeHive.Location</td>
+                    <td>@beeHive.ProductionDate.ToShortDateString()</td>
+                    <td>@beeHive.Capacity</td>
+                    <td>@beeHive.UserName</td>
+                    <td>@beeHive.UserEmail</td>
+                    <td>
+                        <a asp-controller="Beehive" asp-area="Admin" asp-action="Edit" asp-route-id="@beeHive.Id" class="btn btn-primary">Edit</a>
+                        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteModal-@beeHive.Id">Delete</button>
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal-@beeHive.Id" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete this BeeHive?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <form method="post" asp-controller="Beehive" asp-area="Admin" asp-action="DeleteConfirmed" asp-route-id="@beeHive.Id">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <!--... (Actions için butonlar buraya gelecek) -->
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyIdDpw1N0n+4xl47bOJTG/mI4lQ=="
+            crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Arama işlevi
+            $("input").on("input", function () {
+                filterTable();
+            });
+
+            function filterTable() {
+                var location = $("#locationInput").val().toLowerCase();
+                var dateMin = $("#dateInputMin").val();
+                var dateMax = $("#dateInputMax").val();
+                var dateFilter = $("#dateFilter").val();
+                var capacityMin = $("#capacityInputMin").val();
+                var capacityMax = $("#capacityInputMax").val();
+                var owner = $("#ownerInput").val().toLowerCase();
+                var email = $("#emailInput").val().toLowerCase();
+
+                $("table tbody tr").each(function () {
+                    var locationMatch = !location || $(this).find("td:nth-child(1)").text().toLowerCase().includes(location);
+                    var dateMatch = !dateMin || !dateMax || (
+                        (dateFilter === "on" && $(this).find("td:nth-child(2)").text() === dateMin) ||
+                        (dateFilter === "before" && $(this).find("td:nth-child(2)").text() < dateMin) ||
+                        (dateFilter === "after" && $(this).find("td:nth-child(2)").text() > dateMin)
+                    );
+                    var capacityMatch = !capacityMin || !capacityMax || (
+                        ($(this).find("td:nth-child(3)").text() >= capacityMin) &&
+                        ($(this).find("td:nth-child(3)").text() <= capacityMax)
+                    );
+                    var ownerMatch = !owner || $(this).find("td:nth-child(4)").text().toLowerCase().includes(owner);
+                    var emailMatch = !email || $(this).find("td:nth-child(5)").text().toLowerCase().includes(email);
+
+                    $(this).toggle(locationMatch && dateMatch && capacityMatch && ownerMatch && emailMatch);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

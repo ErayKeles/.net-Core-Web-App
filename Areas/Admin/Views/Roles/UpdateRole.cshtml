@@ -1,0 +1,53 @@
+﻿@model UpdateRoleViewModel
+@{
+    ViewData["Title"] = "UpdateRole";
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Ünvan Düzenleme</h1>
+
+                    @if (TempData["SucceededMessage"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @TempData["SucceededMessage"]
+                        </div>
+                    }
+
+                    <form asp-controller="Roles" asp-action="UpdateRole" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <input type="hidden" asp-for="RoleID" />
+
+                        <div class="mb-3">
+                            <label asp-for="RoleName" class="form-label">Ünvan Adı</label>
+                            <input asp-for="RoleName" class="form-control" />
+                            <span asp-validation-for="RoleName" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Güncelle</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6">
+            <div class="d-grid gap-2">
+                <a asp-action="Index" class="btn btn-secondary">Ünvan Listesi</a>
+            </div>
+        </div>
+    </div>
+</div>

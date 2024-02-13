@@ -1,0 +1,40 @@
+﻿@model List<AdminUserViewModel>
+@{
+    ViewData["Title"] = "UserList";
+}
+
+<h1 class="text-center">Kayıtlı Kullanıcılar</h1>
+
+<div class="align-middle" style="text-align:center;">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>KULLANICI ADI</th>
+                <th>EMAİL</th>
+                <th></th>
+                <th>KULLANICI İŞLEMLERİ</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><user-picture-thumbnail picture-url="@item.PictureURL" class="rounded-3 align-middle" width="50"></user-picture-thumbnail></td>
+                    <td class="align-middle">@item.UserID</td>
+                    <td class="align-middle">@item.UserName</td>
+                    <td class="align-middle">@item.UserEmail</td>
+                    <td class="align-middle">
+                        <user-role-names user-id="@item.UserID"></user-role-names>
+                    </td>
+                    <td class="align-middle">
+                        <a asp-controller="Roles" asp-action="AssingRole" asp-route-id="@item.UserID" class="btn btn-info">Ünvan Ata</a>
+                        <a asp-controller="Home" asp-action="AddBeehive" asp-route-userId="@item.UserID" class="btn btn-success">Kovan Ekle</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
